@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="h2">Sign In</h1>
+<form action="" method="post" nonvalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.username.label }}<br>
+        {{ form.username(size=32) }}
+        {% for error in form.username.errors %}
+            <div class="alert alert-danger" role="alert">
+                <strong>[{{ error }}]</strong>
+            </div>    
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.password.label }}<br>
+        {{ form.password(size=32) }}
+        {% for error in form.password.errors %}
+            <div class="alert alert-danger" role="alert">
+                <strong>[{{ error }}]</strong>
+            </div>    
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.remember_me() }} {{ form.remember_me.lable }}
+    </p>
+    <p>{{ form.submit()  }}</p>
+</form>
+{% endblock %}
