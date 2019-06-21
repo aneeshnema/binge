@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Profile</h1>
+<form action="" method="POST">
+    {{form.hidden_tag()}}
+    <p>
+        {{form.username.label}}<br>
+        {{form.username(size=32)}}<br>
+        {% for error in form.username.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <strong>{{error}}</strong> 
+            </div>
+            
+            <script>
+              $(".alert").alert();
+            </script>
+        {% endfor %}  
+    </p>
+    <p>
+        {{form.about_me.label}}<br>
+        {{form.about_me(cols=50, rows=4)}}<br>
+        {% for error in form.about_me.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>{{error}}</strong> 
+            </div>
+              
+            <script>
+                $(".alert").alert();
+            </script>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
