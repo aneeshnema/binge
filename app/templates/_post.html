@@ -1,6 +1,18 @@
-<div class="row pb-2">
-    <div class="col-xs-3 pr-3">
-        <img src="{{ user.avatar(36) }}" class="img-thumbnail" alt="">
+<div class="card mb-2">
+    <div class="card-body">
+        <div class="row pl-3">
+            <div class="col-xs-3 pr-3">
+                <img src="{{post.author.avatar(36)}}" class="img-thumbnail" alt="">
+            </div>
+            <div class="col-xs-9">
+                <a href="{{url_for('user', username=post.author.username)}}">
+                <h5 class="card-title mb-0">{{post.author.username}}</h5>
+                </a>
+                <p class="text-muted mb-2">{{post.timestamp}}</p>
+            </div>
+        </div>
+        <p class="card-text">{{post.body}}</p>
+        <!-- <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a> -->
     </div>
-    <div class="col-xs-9">{{ post.author.username }} says: <b>{{ post.body }}</b></div>
 </div>

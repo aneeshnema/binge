@@ -1,8 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hello, {{current_user.username}}!</h1>
+    <h1>Hi, {{current_user.username}}!</h1>
+    {% if form %}            
+    <form action="" method="POST">
+        {{form.hidden_tag()}}
+        <p>
+            {{form.post.label}}<br>
+            {{form.post(cols=64, rows=4)}}<br>
+            {% for error in form.post.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>{{error}}</strong> 
+            </div>
+            <script>
+                $(".alert").alert();
+            </script>
+            {% endfor %}
+        </p>
+        <p>{{form.submit()}}</p>
+    </form>
+    {% endif %}
     {% for post in posts %}
-    <div><p>{{post.author.username}}<b>{{post.body}}</b></p></div>
+        {% include '_post.html' %}
     {% endfor %}
 {% endblock %}
