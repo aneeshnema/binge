@@ -3,15 +3,15 @@
 {% block content %}
     <h1>Hi, {{current_user.username}}!</h1>
     {% if form %}            
-    <form action="" method="POST">
+    <form action="" method="POST" class="mb-3">
         {{form.hidden_tag()}}
-        <p>
+        <div class="form-group">
             {{form.post.label}}<br>
-            {{form.post(cols=64, rows=4)}}<br>
+            {{form.post(cols=64, rows=4, class_="form-control")}}
             {% for error in form.post.errors %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
                 <strong>{{error}}</strong> 
             </div>
@@ -19,8 +19,8 @@
                 $(".alert").alert();
             </script>
             {% endfor %}
-        </p>
-        <p>{{form.submit()}}</p>
+        </div>
+        {{form.submit(class_="btn btn-primary")}}
     </form>
     {% endif %}
     {% for post in posts %}
