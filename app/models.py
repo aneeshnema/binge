@@ -96,7 +96,7 @@ class Movie(db.Model):
     count = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return '<Movie {} {}>'.format(self.title, self)
+        return '<Movie {} {}>'.format(self.title, self.rating)
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -105,6 +105,9 @@ class Review(db.Model):
     rating = db.Column(db.Float(2))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     #body = db.Column(db.String(140))
+
+    def __repr__(self):
+        return '<Review {} {}>'.format(self.movie_id, self.rating)
 
 @login.user_loader
 def load_user(id):
