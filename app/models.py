@@ -77,6 +77,35 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
+class Movie(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), index=True)
+    released = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    #posts = db.relationship('Post', backref='movie', lazy='dynamic')
+    runtime = db.Column(db.Integer)
+    genre = db.Column(db.String(100))
+    director = db.Column(db.String(64))
+    actors = db.Column(db.String(160))
+    plot = db.Column(db.String(600))
+    poster = db.Column(db.String(300), index=True)
+    metascore = db.Column(db.Float(2), index=True)
+    imdb_rating = db.Column(db.Float(2), index=True)
+    imdb_id = db.Column(db.String(9))
+    production = db.Column(db.String(64))
+    rating = db.Column(db.Float(2), index=True, default=0)
+    count = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return '<Movie {} {}>'.format(self.title, self)
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
+    rating = db.Column(db.Float(2))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    #body = db.Column(db.String(140))
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
