@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    reviews = db.relationship('Review', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     followed = db.relationship('User', secondary=followers,
@@ -79,30 +80,29 @@ class Post(db.Model):
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), index=True)
+    title = db.Column(db.String(120), index=True, nullable=False)
     released = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    #posts = db.relationship('Post', backref='movie', lazy='dynamic')
     runtime = db.Column(db.Integer)
     genre = db.Column(db.String(100))
     director = db.Column(db.String(64))
     actors = db.Column(db.String(160))
     plot = db.Column(db.String(600))
     poster = db.Column(db.String(300), index=True)
-    metascore = db.Column(db.Float(2), index=True)
-    imdb_rating = db.Column(db.Float(2), index=True)
+    imdb_rating = db.Column(db.Float(4), index=True)
     imdb_id = db.Column(db.String(9))
     production = db.Column(db.String(64))
-    rating = db.Column(db.Float(2), index=True, default=0)
+    rating = db.Column(db.Float(4), index=True, default=0)
     count = db.Column(db.Integer, default=0)
+    reviews = db.relationship('Review', backref='movie', lazy='dynamic')
 
     def __repr__(self):
-        return '<Movie {} {}>'.format(self.title, self.rating)
+        return '<Movie {} {:.2f}>'.format(self.title, self.rating)
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
-    rating = db.Column(db.Float(2))
+    rating = db.Column(db.Float(4))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     #body = db.Column(db.String(140))
 

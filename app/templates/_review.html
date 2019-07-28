@@ -1,0 +1,20 @@
+<div class="card mb-2">
+        <div class="card-body">
+            <div class="row pl-3">
+                <div class="col-xs-3 pr-3">
+                    <a href="{{url_for('movie', movieid=review.movie_id)}}">
+                        <h5 class="card-title mb-0">{{review.movie.title}}</h5>    
+                    </a>
+                </div>
+                <div class="col-xs-9">
+                    <h5 class="card-title mb-0">{{review.author.username}}</h5>
+                    <h5 class="card-title mb-0">{{review.rating}}</h5>
+                    </a>
+                    <p class="text-muted mb-2">{{review.timestamp}}</p>
+                </div>
+            </div>
+            <p class="card-text"></p>
+            <!-- <a href="#" class="card-link">Card link</a>
+            <a href="#" class="card-link">Another link</a> -->
+        </div>
+    </div>

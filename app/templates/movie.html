@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row p-3">
+        <div class="col-sm-3 ">
+            <img src="{{ movie.poster }}" class="img-thumbnail" alt="">
+        </div>
+        <div class="col-sm-9">
+            <h2>{{ movie.title }}</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">Rating: {{ movie.rating|round(1) }}</li>
+                {% if movie.imdb_rating %}<li class="list-inline-item">IMDB: {{ movie.imdb_rating|round(1) }}</li>{% endif %}
+            </ul>
+            {% if movie.genre %}<p class="text-muted">{{ movie.genre }}</p>{% endif %}
+            {% if movie.plot %}
+            <div id="summary">
+                <p class="collapse" id="collapseSummary">{{ movie.plot }}</p>
+                <a class="collapsed" data-toggle="collapse" href="#collapseSummary" aria-expanded="false" aria-controls="collapseSummary"></a>
+            </div>{% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="container-fluid">
+        {% for review in reviews %}
+            {% include "_review.html" %}
+        {% endfor %}
+        <ul class="list-inline">
+        {% if prev_url %}
+            <a href="{{prev_url}}" class="list-inline-item">Newer reviews</a>
+        {% endif %}
+        {% if next_url %}
+            <a href="{{next_url}}" class="list-inline-item">Older reviews</a>
+        {% endif %}
+        </ul>
+    </div>
+{% endblock %}
