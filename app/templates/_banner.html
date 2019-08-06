@@ -1,0 +1,10 @@
+<div class="card" style="height:75%;width:75%;">
+    <a href="{{url_for('main.movie', movieid=mv.id)}}" class="reveal">
+    <img class="card-img" src="{{mv.poster}}" alt="{{mv.title}}">
+    <div class="container-fluid card-img-overlay text-center text-white">
+      <h5 class="card-title">{{mv.rating|round(1)}}/5.0</h5>
+      <p class="card-text">{{mv.genre}}</p>
+    </div>
+    <div class="card-footer text-dark" style="overflow: hidden;white-space: nowrap;">{{mv.title}}</div>
+    </a>
+</div>

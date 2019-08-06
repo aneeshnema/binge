@@ -1,0 +1,40 @@
+<h4 class="mx-3">{{title}}</h4><br>
+<div id="mvs" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active pl-2">
+            <div class="row">
+                {% for mv in movies[:4] %}
+                <div class="col-sm-3">
+                    {% include "_banner.html" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="carousel-item pl-2">
+            <div class="row">
+                {% for mv in movies[4:8] %}
+                <div class="col-sm-3">
+                    {% include "_banner.html" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="carousel-item pl-2">
+            <div class="row">
+                {% for mv in movies[8:] %}
+                <div class="col-sm-3">
+                    {% include "_banner.html" %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#mvs" role="button" data-slide="prev" style="margin-left: -8em">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#mvs" role="button" data-slide="next" style="margin-right: -5em">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>

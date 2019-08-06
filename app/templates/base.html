@@ -20,7 +20,7 @@
 
 <body>
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index') }}">Blog</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">Blog</a>
         <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId"
             aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -29,17 +29,17 @@
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 {% if current_user.is_anonymous %}
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('login') }}">Login <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login <span class="sr-only">(current)</span></a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                    <a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('explore') }}">Explore</a>
+                    <a class="nav-link" href="{{ url_for('main.explore') }}">Explore</a>
                 </li>
                 {% endif %}
                 <li class="nav-item dropdown">
@@ -59,7 +59,7 @@
     </nav>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <div class="container alert alert-primary alert-dismissible fade show my-3" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             <span class="sr-only">Close</span>
@@ -84,6 +84,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js" 
+        integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" 
+        crossorigin="anonymous"></script>
+    {{ moment.include_moment(no_js = True) }}
 </body>
 
 </html>
