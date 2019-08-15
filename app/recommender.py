@@ -23,6 +23,7 @@ class Recommender:
     last_restart = None
     
     def restart():
+        print("RESTART RECOMMENDATION ENGINE", file=sys.stderr)
         Recommender.mat = generate_mat()
         Recommender.tmat = Recommender.mat.transpose()
         Recommender.model = NMSLibAlternatingLeastSquares()
@@ -35,7 +36,6 @@ class Recommender:
             Recommender.restart()
 
     def similar_to(movie):
-        Recommender.need_restart()
         if movie.last_recommended < Recommender.last_restart:
             print("GENERATING RECOMMENDATION FOR M{}".format(movie.id), file=sys.stderr)
             movie.similar = []
@@ -47,17 +47,16 @@ class Recommender:
             movie.last_recommended = datetime.utcnow()
             db.session.commit()
         else:
-            print("USING CACHED RECOMMENDATION FOR M{}".format(movie.id), file=sys.stderr)
+            print("USING PRECOMPUTED RECOMMENDATION FOR M{}".format(movie.id), file=sys.stderr)
     
     def recommend(user):
-        Recommender.need_restart()
         if user.last_recommended < Recommender.last_restart:
             print("GENERATING RECOMMENDATION FOR U{}".format(user.id), file=sys.stderr)
             user.recommended = []
-            recommended = [mv[0]+1 for mv in Recommender.model.recommend(user.id-1, tmat, 12, filter_already_liked_items=True)]
+            recommended = [mv[0]+1 for mv in Recommender.model.recommend(user.id-1, Recommender.tmat, 12)] #filter_already_liked_items=True
             for mv in recommended:
                 user.recommended.append(Movie.query.get(int(mv)))
             user.last_recommended = datetime.utcnow()
             db.session.commit()
         else:
-            print("USING CACHED RECOMMENDATION FOR U{}".format(user.id), file=sys.stderr)
+            print("USING PRECOMPUTED RECOMMENDATION FOR U{}".format(user.id), file=sys.stderr)

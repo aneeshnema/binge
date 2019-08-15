@@ -1,26 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hi, {{current_user.username}}!</h1>
-{% if form %}
-<form action="" method="POST" class="mb-3">
-    {{form.hidden_tag()}}
-    <div class="form-group">
-        {{form.post.label}}<br>
-        {{form.post(cols=64, rows=4, class_="form-control")}}
-        {% set errors = form.post.errors %}
-        {% include "_error.html" %}
-    </div>
-    {{form.submit(class_="btn btn-primary")}}
-</form>
-{% endif %}
-{% for post in posts %}
-{% include '_post.html' %}
+<h1 class="text-center p-5" style="font-size: 8em">Binge</h1>
+{% for title, movies in carousels %}
+    {% set id = loop.index %}
+    {% include "_carousel.html" %}
 {% endfor %}
-{% if prev_url %}
-<a href="{{prev_url}}">Newer Posts</a>
-{% endif %}
-{% if next_url %}
-<a href="{{next_url}}">Older Posts</a>
-{% endif %}
 {% endblock %}

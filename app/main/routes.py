@@ -17,18 +17,29 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    Recommender.recommend(current_user)
+    carousels = [('Top Recommendations For You', current_user.recommended)]  
+    history = [r.movie for r in current_user.reviews.order_by(Review.timestamp.desc()).limit(3)]
+    for movie in history:
+        Recommender.similar_to(movie)
+        carousels.append(('Because You Have Watched {}'.format(movie.title), movie.similar))
+    return render_template('index.html', title='Home Page', carousels=carousels)
+
+@bp.route('/blog', methods=['GET', 'POST'])
+@login_required
+def blog():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
-        return redirect(url_for('index'))
+        return redirect(url_for('blog'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
-    return render_template('index.html', title='Home Page', form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
+    next_url = url_for('blog', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('blog', page=posts.prev_num) if posts.has_prev else None
+    return render_template('blog.html', title='Blog', form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/user/<username>')
 @login_required
@@ -110,6 +121,7 @@ def movie(movieid):
             review.body = form.body.data if form.body.data is not "" else None
             review.timestamp = datetime.utcnow()
         db.session.commit()
+        Recommender.need_restart()
         return redirect(url_for('movie', movieid=movie.id))
     elif review is not None:
         form.rating.data = review.rating

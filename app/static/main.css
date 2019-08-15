@@ -26,6 +26,7 @@
 
 .reveal .card-img-overlay:hover {
     height: auto;
+    max-height: 20em;
     opacity: 1;
     background-color: rgba(52, 58, 64, 0.8);
     transition: opacity 0.3s ease;
@@ -52,4 +53,11 @@
   content: '<';
   font-size: 55px;
   color: red;
+}
+
+.max-lines {
+  display: block;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow: hidden;
 }
