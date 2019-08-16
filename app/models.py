@@ -6,6 +6,7 @@ from flask_login import UserMixin
 from hashlib import md5
 from time import time
 import jwt
+from flask_sqlalchemy import SQLAlchemy
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -20,6 +21,7 @@ similarto = db.Table('similarto',
     db.Column('similar_id', db.Integer, db.ForeignKey('movie.id')))
 
 class User(UserMixin, db.Model):
+    __searchable__ = ['username']
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -34,15 +36,17 @@ class User(UserMixin, db.Model):
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
     recommended = db.relationship('Movie', secondary=recommend,
         lazy='dynamic')
-        #primaryjoin=(recommend.c.user_id == id),
-        #secondaryjoin=(recommend.c.movie_id == Movie.id),
     last_recommended = db.Column(db.DateTime, default=datetime(1970,1,1,0,0,0))
+    role = db.Column(db.String(5), default='USER')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+    
+    def set_role(self, role):
+        self.role = role
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -67,6 +71,11 @@ class User(UserMixin, db.Model):
         own = Post.query.filter(Post.user_id == self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
     
+    def followed_reviews(self):
+        followed = Review.query.join(followers, (followers.c.followed_id == Review.user_id)).filter(followers.c.follower_id == self.id)
+        own = Review.query.filter(Review.user_id == self.id)
+        return followed.union(own).order_by(Review.timestamp.desc())
+    
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time()+ expires_in},
@@ -90,7 +99,9 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
+#@whooshee.register_model('title')
 class Movie(db.Model):
+    __searchable__ = ['title']
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), index=True, nullable=False)
     released = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -110,8 +121,6 @@ class Movie(db.Model):
         primaryjoin=(similarto.c.movie_id == id),
         secondaryjoin=(similarto.c.similar_id == id),
         lazy='dynamic')
-        #backref=db.backref('followers', lazy='dynamic')
-        #foreign_keys=similarto.c.movie_id, 
     last_recommended = db.Column(db.DateTime, default=datetime(1970,1,1,0,0,0))
 
     def __repr__(self):

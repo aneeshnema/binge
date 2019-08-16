@@ -16,3 +16,7 @@ class Config(object):
     ADMINS = ['admin@example.com']
     POSTS_PER_PAGE = 25
     NUM_RECOMMENDATIONS = 12
+    MSEARCH_INDEX_NAME = 'msearch'
+    MSEARCH_BACKEND = 'whoosh'
+    MSEARCH_PRIMARY_KEY = 'id'
+    MSEARCH_ENABLE = True

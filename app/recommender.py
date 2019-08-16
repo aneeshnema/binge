@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from implicit.approximate_als import NMSLibAlternatingLeastSquares
 from app.models import Movie, User, Review
 from app import db
-import sys
+from sys import stderr
 
 def generate_mat():
     q = Review.query.with_entities(Review.user_id, Review.movie_id, Review.rating)
@@ -23,7 +23,7 @@ class Recommender:
     last_restart = None
     
     def restart():
-        print("RESTART RECOMMENDATION ENGINE", file=sys.stderr)
+        print("RESTART RECOMMENDATION ENGINE", file=stderr)
         Recommender.mat = generate_mat()
         Recommender.tmat = Recommender.mat.transpose()
         Recommender.model = NMSLibAlternatingLeastSquares()
@@ -37,7 +37,7 @@ class Recommender:
 
     def similar_to(movie):
         if movie.last_recommended < Recommender.last_restart:
-            print("GENERATING RECOMMENDATION FOR M{}".format(movie.id), file=sys.stderr)
+            print("GENERATING RECOMMENDATION FOR M{}".format(movie.id), file=stderr)
             movie.similar = []
             similar = [mv[0]+1 for mv in Recommender.model.similar_items(movie.id-1, 13)]
             if movie.id in similar:
@@ -47,11 +47,11 @@ class Recommender:
             movie.last_recommended = datetime.utcnow()
             db.session.commit()
         else:
-            print("USING PRECOMPUTED RECOMMENDATION FOR M{}".format(movie.id), file=sys.stderr)
+            print("USING PRECOMPUTED RECOMMENDATION FOR M{}".format(movie.id), file=stderr)
     
     def recommend(user):
         if user.last_recommended < Recommender.last_restart:
-            print("GENERATING RECOMMENDATION FOR U{}".format(user.id), file=sys.stderr)
+            print("GENERATING RECOMMENDATION FOR U{}".format(user.id), file=stderr)
             user.recommended = []
             recommended = [mv[0]+1 for mv in Recommender.model.recommend(user.id-1, Recommender.tmat, 12)] #filter_already_liked_items=True
             for mv in recommended:
@@ -59,4 +59,4 @@ class Recommender:
             user.last_recommended = datetime.utcnow()
             db.session.commit()
         else:
-            print("USING PRECOMPUTED RECOMMENDATION FOR U{}".format(user.id), file=sys.stderr)
+            print("USING PRECOMPUTED RECOMMENDATION FOR U{}".format(user.id), file=stderr)

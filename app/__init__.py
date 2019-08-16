@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_admin import Admin
+from flask_msearch import Search
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
@@ -15,6 +17,8 @@ login = LoginManager()
 login.login_view = 'auth.login'
 mail = Mail()
 moment = Moment()
+admin = Admin(name='Binge', template_mode='bootstrap3')
+search = Search()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -25,9 +29,11 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
-    # app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
-    #     if app.config['ELASTICSEARCH_URL'] else None
-
+    search.init_app(app)
+    
+    from app.adminutils import MyAdminIndexView
+    admin.init_app(app, index_view=MyAdminIndexView())
+    
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 

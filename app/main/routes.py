@@ -25,6 +25,15 @@ def index():
         carousels.append(('Because You Have Watched {}'.format(movie.title), movie.similar))
     return render_template('index.html', title='Home Page', carousels=carousels)
 
+@bp.route('/social')
+@login_required
+def social():
+    page = request.args.get('page', 1, type=int)
+    reviews = current_user.followed_reviews().paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('main.social', page=reviews.next_num) if reviews.has_next else None
+    prev_url = url_for('main.social', page=reviews.prev_num) if reviews.has_prev else None
+    return render_template('social.html', title='Social', reviews=reviews.items, next_url=next_url, prev_url=prev_url)
+
 @bp.route('/blog', methods=['GET', 'POST'])
 @login_required
 def blog():
@@ -34,11 +43,11 @@ def blog():
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
-        return redirect(url_for('blog'))
+        return redirect(url_for('main.blog'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('blog', page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('blog', page=posts.prev_num) if posts.has_prev else None
+    next_url = url_for('main.blog', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('main.blog', page=posts.prev_num) if posts.has_prev else None
     return render_template('blog.html', title='Blog', form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/user/<username>')
@@ -47,8 +56,8 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    next_url = url_for('main.user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('main.user', username=user.username, page=posts.prev_num) if posts.has_prev else None
     return render_template('user.html', title=user.username, user=user, posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
@@ -60,7 +69,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
@@ -72,14 +81,14 @@ def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     if user == current_user:
         flash('You cannot follow yourself!')
-        return redirect('user', username=username)
+        return redirect('main.user', username=username)
     current_user.follow(user)
     db.session.commit()
     flash('You are now following {}!'.format(username))
-    return redirect(url_for('user', username=username))
+    return redirect(url_for('main.user', username=username))
 
 @bp.route('/unfollow/<username>')
 @login_required
@@ -87,23 +96,23 @@ def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash('User {} not found.'.format(username))
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     if user == current_user:
         flash('You cannot unfollow yourself!')
-        return redirect(url_for('user', username=username))
+        return redirect(url_for('main.user', username=username))
     current_user.unfollow(user)
     db.session.commit()
     flash('You unfollowed {}.'.format(username))
-    return redirect(url_for('user', username=username))
+    return redirect(url_for('main.user', username=username))
 
 @bp.route('/explore')
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
-    return render_template('index.html', title='Explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
+    next_url = url_for('blog', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('blog', page=posts.prev_num) if posts.has_prev else None
+    return render_template('blog.html', title='Explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/movie/<movieid>', methods=['GET', 'POST'])
 @login_required
@@ -122,14 +131,32 @@ def movie(movieid):
             review.timestamp = datetime.utcnow()
         db.session.commit()
         Recommender.need_restart()
-        return redirect(url_for('movie', movieid=movie.id))
+        return redirect(url_for('main.movie', movieid=movie.id))
     elif review is not None:
         form.rating.data = review.rating
         form.body.data = review.body
     page = request.args.get('page', 1, type=int)
     reviews = movie.reviews.filter(Review.body.isnot(None)).order_by(Review.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('movie', movieid=movie.id, page=reviews.next_num) if reviews.has_next else None
-    prev_url = url_for('movie', movieid=movie.id, page=reviews.prev_num) if reviews.has_prev else None
+    next_url = url_for('main.movie', movieid=movie.id, page=reviews.next_num) if reviews.has_next else None
+    prev_url = url_for('main.movie', movieid=movie.id, page=reviews.prev_num) if reviews.has_prev else None
     Recommender.similar_to(movie)
     carousels = [('Similar Movies', movie.similar)]    
     return render_template('movie.html', title=movie.title, movie=movie, carousels=carousels, reviews=reviews.items, form=form, next_url=next_url, prev_url=prev_url)
+
+@bp.route('/search')
+@login_required
+def search():
+    keyword = request.args.get('keyword', type=str)
+    if (keyword is None) or keyword == '':
+        return redirect(url_for('main.index'))
+    t = request.args.get('t', 'movie', type=str)
+    page = request.args.get('page', 1, type=int)
+    mov = True
+    if t == 'movie':
+        res = Movie.query.msearch(keyword).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+    else:
+        res = User.query.msearch(keyword).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
+        mov = False
+    next_url = url_for('main.search', keyword=keyword, t=t, page=res.next_num) if res.has_next else None
+    prev_url = url_for('main.search', keyword=keyword, t=t, page=res.prev_num) if res.has_prev else None
+    return render_template('search.html', title='Search', keyword=keyword, res=res.items, next_url=next_url, prev_url=prev_url, ismov=mov)

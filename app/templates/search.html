@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="m-3">Search results for, {{keyword}}</h1>
+{% if ismov %}
+{% for item in res %}
+    <br><a class="m-4" href="{{url_for('main.movie', movieid=item.id)}}">{{item.title}}</a>
+{% endfor %}
+{% else %}
+{% for item in res %}
+    <br><a class="m-4" href="{{url_for('main.user', username=item.username)}}">{{item.username}}</a>
+{% endfor %}
+{% endif %}
+<br><br>
+{% if prev_url %}
+<a class="m-4" href="{{prev_url}}">Prev</a>
+{% endif %}
+{% if next_url %}
+<a class="m-4" href="{{next_url}}">Next</a>
+{% endif %}
+{% endblock %}
