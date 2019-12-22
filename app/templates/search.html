@@ -3,12 +3,12 @@
 {% block content %}
 <h1 class="m-3">Search results for, {{keyword}}</h1>
 {% if ismov %}
-{% for item in res %}
-    <br><a class="m-4" href="{{url_for('main.movie', movieid=item.id)}}">{{item.title}}</a>
+{% for movie in res %}
+    {% include "movie_tile.html" %}
 {% endfor %}
 {% else %}
-{% for item in res %}
-    <br><a class="m-4" href="{{url_for('main.user', username=item.username)}}">{{item.username}}</a>
+{% for user in res %}
+    {% include "user_tile.html" %}
 {% endfor %}
 {% endif %}
 <br><br>

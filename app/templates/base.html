@@ -33,26 +33,18 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('main.blog') }}">Blog</a>
+                    <a class="nav-link" href="{{ url_for('main.feed') }}">Feed</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('main.explore') }}">Explore</a>
                 </li>
-                {% endif %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownId">
-                        <a class="dropdown-item" href="#">Action 1</a>
-                        <a class="dropdown-item" href="#">Action 2</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                 </li>
+                {% endif %}
             </ul>
             <form class="form-inline my-2 my-lg-0" onsubmit="return searchurl()">
                 <select id="t" class="form-control mr-sm-2">

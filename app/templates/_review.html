@@ -2,12 +2,15 @@
     <div class="card-body">
         <ul class="list-inline card-title">
             <li class="list-inline-item">
-                <a href="{{url_for('main.movie', movieid=review.movie_id)}}">
+                <a href="{{ url_for('main.user', username=review.author.username) }}">
+                    {{review.author.username}}
+                </a>
+                rated
+                <a href="{{ url_for('main.movie', movieid=review.movie_id) }}">
                     {{review.movie.title}}
                 </a>
+                {{review.rating}}
             </li>
-            <li class="list-inline-item">{{review.author.username}}</li>
-            <li class="list-inline-item">{{review.rating}}</li>
             <li class="list-inline-item"><small class="text-muted">{{moment(review.timestamp).fromNow()}}</small></li>
         </ul>
         {% if review.body %}

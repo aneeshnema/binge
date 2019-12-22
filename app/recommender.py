@@ -42,6 +42,8 @@ class Recommender:
             similar = [mv[0]+1 for mv in Recommender.model.similar_items(movie.id-1, 13)]
             if movie.id in similar:
                 similar.remove(movie.id)
+            if len(similar) > 12:
+                similar = similar[0:12]
             for mv in similar:
                 movie.similar.append(Movie.query.get(int(mv)))
             movie.last_recommended = datetime.utcnow()

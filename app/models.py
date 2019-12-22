@@ -26,7 +26,6 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
     reviews = db.relationship('Review', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
@@ -66,11 +65,6 @@ class User(UserMixin, db.Model):
         if self.is_following(user):
             self.followed.remove(user)
     
-    def followed_posts(self):
-        followed = Post.query.join(followers, (followers.c.followed_id == Post.user_id)).filter(followers.c.follower_id == self.id)
-        own = Post.query.filter(Post.user_id == self.id)
-        return followed.union(own).order_by(Post.timestamp.desc())
-    
     def followed_reviews(self):
         followed = Review.query.join(followers, (followers.c.followed_id == Review.user_id)).filter(followers.c.follower_id == self.id)
         own = Review.query.filter(Review.user_id == self.id)
@@ -88,16 +82,6 @@ class User(UserMixin, db.Model):
         except:
             return
         return User.query.get(id)
-    
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return '<Post {}>'.format(self.body)
 
 #@whooshee.register_model('title')
 class Movie(db.Model):
