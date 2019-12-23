@@ -8,13 +8,20 @@ All the data is stored in a sqlite database (`app.db`). For implimentation purpo
 ![home page](images/Home-Page.png)
 
 # Features
-- Recommendations based on user as well as similar movies.
+- Recommendations based on user as well as similar movies. Write reviews and give rating.
+  
   ![similar movies](images/movie.png)
+
 - Follow users to see thier reviews in feed.
+  
   ![feed](images/Feed.png)
+
 - Search movies and users (used flask-msearch)
+  
   ![search](images/Search.png)
+  
 - Admin view (localhost:5000/admin) (only accessible by user with `role='ADMIN'`)
+  
   ![admin](images/admin.png)
 
 # Setup and Usage
